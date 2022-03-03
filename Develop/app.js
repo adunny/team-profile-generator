@@ -10,6 +10,126 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const promptManager = () => {
+return inquirer
+    .prompt([
+        // manager prompts
+        {
+            type: 'input',
+            name: 'managerName',
+            message: "What your team manager's name?"
+        },
+        {
+            type: 'input',
+            name: 'managerId',
+            message: "Please enter the manager's ID."
+        },
+        {
+            type: 'input',
+            name: 'managerEmail',
+            message: "Please enter the manager's e-mail address."
+        },
+        {
+            type: 'input',
+            name: 'managerOfficeNumber',
+            message: "Please enter the manager's office number."
+        },
+        {
+            type: 'list',
+            name: 'employeeList',
+            message: 'Please select an employee to add, or select "Finish" if you are done.',
+            choices: ['Engineer', 'Intern', 'Finish']
+        },
+    ]);
+};
+
+const promptEngineer = () => {
+    return inquirer
+    .prompt([
+        {
+            type: 'input',
+            name: 'engineerName',
+            message: "Please enter the engineer's name.",
+        },
+        {
+            type: 'input',
+            name: 'engineerId',
+            message: "Please enter the engineer's ID.",
+        },
+        {
+            type: 'input',
+            name: 'engineerEmail',
+            message: "Please enter the engineer's e-mail address."
+        },
+        {
+            type: 'input',
+            name: 'githubName',
+            message: "Please enter the engineer's github username."
+        }
+    ])
+};
+
+const promptIntern = () => {
+    return inquirer
+    .prompt([
+        {
+            type: 'input',
+            name: 'internName',
+            message: "Please enter the intern's name."
+        },
+        {
+            type: 'input',
+            name: 'internId',
+            message: "Please enter the intern's ID."
+        },
+        {
+            type: 'input',
+            name: 'internEmail',
+            message: "Please enter the intern's e-mail address."
+        },
+        {
+            type: 'input',
+            name: 'schoolName',
+            message: "Please enter the name of the school this intern is attending."
+        }
+    ])
+}
+
+promptManager()
+.then(managerInfo => {
+    const {managerName, managerId, managerEmail, managerOfficeNumber} = managerInfo;
+    const manager = new Manager(managerName, managerId, managerEmail, managerOfficeNumber);
+    
+})
+.then(promptEngineer)
+.then(promptIntern)
+
+
+
+
+//     // additional employees/finish prompts
+       
+
+        // engineer prompts
+        
+
+      
+    // ])
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
