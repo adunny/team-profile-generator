@@ -11,7 +11,9 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 
 const promptManager = () => {
-return inquirer
+    const employees = [];
+
+    return inquirer
     .prompt([
         // manager prompts
         {
@@ -33,17 +35,42 @@ return inquirer
             type: 'input',
             name: 'managerOfficeNumber',
             message: "Please enter the manager's office number."
-        },
+        }
+    ])
+    .then(managerInfo => {
+        const {managerName, managerId, managerEmail, managerOfficeNumber} = managerInfo;
+        const manager = new Manager(managerName, managerId, managerEmail, managerOfficeNumber);
+        employees.push(manager);
+        console.log(employees);
+        promptEmployeeList(employees);
+        
+    })
+};
+
+const promptEmployeeList = employees => {
+    return inquirer
+    .prompt([
         {
             type: 'list',
             name: 'employeeList',
             message: 'Please select an employee to add, or select "Finish" if you are done.',
             choices: ['Engineer', 'Intern', 'Finish']
         },
-    ]);
-};
+    ])
+    .then(answers => {
+        if (answers.employeeList === 'Engineer') {
+            promptEngineer(employees);
+        }
+        else if (answers.employeeList === 'Intern') {
+            promptIntern(employees);
+        } else {
+            render(employees);
+        }
+    })
+}
 
-const promptEngineer = () => {
+
+const promptEngineer = employees => {
     return inquirer
     .prompt([
         {
@@ -67,9 +94,16 @@ const promptEngineer = () => {
             message: "Please enter the engineer's github username."
         }
     ])
+    .then(engineerInfo => {
+        const {engineerName, engineerId, engineerEmail, githubName} = engineerInfo;
+        const engineer = new Engineer(engineerName, engineerId, engineerEmail, githubName)
+        employees.push(engineer);
+        console.log(employees);
+        promptEmployeeList(employees);
+    })
 };
 
-const promptIntern = () => {
+const promptIntern = employees => {
     return inquirer
     .prompt([
         {
@@ -93,31 +127,20 @@ const promptIntern = () => {
             message: "Please enter the name of the school this intern is attending."
         }
     ])
+    .then(internInfo => {
+        const {internName, internId, internEmail, schoolName} = internInfo;
+        const intern = new Intern(internName, internId, internEmail, schoolName);
+        employees.push(intern);
+        console.log(employees);
+        promptEmployeeList(employees);
+    })
 }
 
-promptManager()
-.then(managerInfo => {
-    const {managerName, managerId, managerEmail, managerOfficeNumber} = managerInfo;
-    const manager = new Manager(managerName, managerId, managerEmail, managerOfficeNumber);
-    
-})
-.then(promptEngineer)
-.then(promptIntern)
+promptManager();
 
-
-
-
-//     // additional employees/finish prompts
-       
-
-        // engineer prompts
-        
-
-      
-    // ])
-    
 
     
+   
 
 
 
@@ -125,7 +148,7 @@ promptManager()
 
 
 
-
+    
 
 
 
