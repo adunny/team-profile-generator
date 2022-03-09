@@ -9,6 +9,7 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const writeHtml = require("./lib/renderPromise");
 
 const promptManager = () => {
     const employees = [];
@@ -40,37 +41,46 @@ const promptManager = () => {
     .then(managerInfo => {
         const {managerName, managerId, managerEmail, managerOfficeNumber} = managerInfo;
         const manager = new Manager(managerName, managerId, managerEmail, managerOfficeNumber);
+        // push new manager obj into employee array
         employees.push(manager);
-        console.log(employees);
-        promptEmployeeList(employees);
-        
+        return promptEmployeeList(employees);
     })
 };
 
 const promptEmployeeList = employees => {
+    //add employee/finish prompt
     return inquirer
     .prompt([
         {
             type: 'list',
             name: 'employeeList',
-            message: 'Please select an employee to add, or select "Finish" if you are done.',
+            message: `
+            =====================================================================
+            Please select an employee to add, or select "Finish" if you are done.
+            =====================================================================
+            
+            `,
             choices: ['Engineer', 'Intern', 'Finish']
         },
     ])
     .then(answers => {
         if (answers.employeeList === 'Engineer') {
-            promptEngineer(employees);
+            // if add engineer was selected, run engineer prompt and pass the employee array thru
+            return promptEngineer(employees);
         }
         else if (answers.employeeList === 'Intern') {
-            promptIntern(employees);
+            // if add intern was selected, run intern prompt and pass employ array thru
+            return promptIntern(employees);
         } else {
-            render(employees);
+            // if finish was selected, render html
+            writeHtml(employees);
         }
     })
 }
 
 
 const promptEngineer = employees => {
+    // engineer prompts
     return inquirer
     .prompt([
         {
@@ -97,13 +107,15 @@ const promptEngineer = employees => {
     .then(engineerInfo => {
         const {engineerName, engineerId, engineerEmail, githubName} = engineerInfo;
         const engineer = new Engineer(engineerName, engineerId, engineerEmail, githubName)
+        // push new engineer object into employee array
         employees.push(engineer);
-        console.log(employees);
+        // run the add/finish prompt again
         promptEmployeeList(employees);
     })
 };
 
 const promptIntern = employees => {
+    // intern prompts
     return inquirer
     .prompt([
         {
@@ -130,13 +142,15 @@ const promptIntern = employees => {
     .then(internInfo => {
         const {internName, internId, internEmail, schoolName} = internInfo;
         const intern = new Intern(internName, internId, internEmail, schoolName);
+        // push new intern obj into employee array
         employees.push(intern);
-        console.log(employees);
+        // run the add/finish prompt again
         promptEmployeeList(employees);
     })
 }
 
 promptManager();
+
 
 
     
